@@ -2,16 +2,31 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+app.use(express.json());
+
 const tarefas = [
     { id: 1, titulo: "Fazer atividades de PTAC", concluida: false },
     { id: 2, titulo: "Estudar banco de dados", concluida: true },
     { id: 3, titulo: "Desligar servidor", concluida: false }
 ];
 
+app.post('/tarefas', (req, res) => {
+  const titulo = req.body.titulo;
+
+  const novaTarefa = {
+    id: tarefas.length + 1,
+    titulo: titulo,
+    concluida: false // toda tarefa nova começa como não concluída
+  };
+
+    tarefas.push(novaTarefa);
+
+  res.status(201).json(novaTarefa);
+});
+
 app.get('/tarefas', (req, res) => {
  const query = req.query.concluida;
 
-  // Se o aluno digitou ?concluida=... na URL
   if (query) {
     const status = query === 'true';
     const filtradas = tarefas.filter(t => t.concluida === status);
