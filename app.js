@@ -1,7 +1,5 @@
 const express = require('express');
-
 const app = express();
-
 const port = 3000;
 
 const tarefas = [
@@ -10,12 +8,28 @@ const tarefas = [
     { id: 3, titulo: "Desligar servidor", concluida: false }
 ];
 
-app.get("/tarefas", (res,req) => {
-    res.json(tarefas);
+app.get('/tarefas', (req, res) => {
+ const query = req.query.concluida;
+
+  // Se o aluno digitou ?concluida=... na URL
+  if (query) {
+    const status = query === 'true';
+    const filtradas = tarefas.filter(t => t.concluida === status);
+    return res.json(filtradas);
+  }
+
+  res.json(tarefas);
 });
 
+app.get('/tarefas/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const tarefa = tarefas.find(t => t.id === idBusca);
 
-app.get('/', (req,res, next) => {
+  if (!tarefa) {
+    return res.status(404).json({ erro: 'Tarefa não encontrada' });
+  }
+
+app.get('/', (req,res,) => {
     console.log('API de tarefas no ar')
     res.send('OK')
 })
